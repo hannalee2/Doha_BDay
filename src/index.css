@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-chase-blue: #1B4F9C;
+  --color-chase-yellow: #FDE047;
+  --color-chase-red: #E11D48;
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-blue-50 text-slate-900 antialiased;
+  }
+}
+
+.paw-pattern {
+  background-image: radial-gradient(#1B4F9C 20%, transparent 20%),
+    radial-gradient(#1B4F9C 20%, transparent 20%);
+  background-position: 0 0, 10px 10px;
+  background-size: 20px 20px;
+  opacity: 0.1;
+}
+
+.badge-glow {
+  box-shadow: 0 0 20px rgba(253, 224, 71, 0.4);
+}

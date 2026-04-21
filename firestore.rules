@@ -1,0 +1,40 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helpers
+    function isSignedIn() { return request.auth != null; }
+    function isVerifiedAdmin() { 
+      return isSignedIn() && 
+             request.auth.token.email == 'HungryHanna@gmail.com' && 
+             request.auth.token.email_verified == true; 
+    }
+    function isValidId(id) { return id is string && id.size() <= 64 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+
+    function isValidRSVP(data) {
+      return data.keys().hasAll(['name', 'adults', 'children', 'createdAt']) && 
+             data.keys().size() == 4 &&
+             data.name is string && data.name.size() >= 1 && data.name.size() <= 100 &&
+             data.adults is int && data.adults >= 0 && data.adults <= 20 &&
+             data.children is int && data.children >= 0 && data.children <= 20 &&
+             data.createdAt == request.time;
+    }
+
+    match /rsvps/{rsvpId} {
+      // Allow anyone to create an RSVP if valid, but only if ID is valid
+      allow create: if isValidId(rsvpId) && isValidRSVP(incoming());
+      
+      // Only the admin can read the full list or get individual RSVPs
+      allow get, list: if isVerifiedAdmin();
+      
+      // RSVPs are immutable once submitted
+      allow update, delete: if isVerifiedAdmin();
+    }
+  }
+}

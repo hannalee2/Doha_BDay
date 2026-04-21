@@ -1,0 +1,35 @@
+{
+  "entities": {
+    "RSVP": {
+      "title": "RSVP",
+      "description": "Guest RSVP records for the birthday party",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the guest"
+        },
+        "adults": {
+          "type": "number",
+          "description": "Number of adults attending"
+        },
+        "children": {
+          "type": "number",
+          "description": "Number of children attending"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the RSVP was submitted"
+        }
+      },
+      "required": ["name", "adults", "children", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/rsvps/{rsvpId}": {
+      "schema": "RSVP",
+      "description": "Collection of RSVPs"
+    }
+  }
+}
