@@ -11,10 +11,10 @@ service cloud.firestore {
     function isSignedIn() { return request.auth != null; }
     function isVerifiedAdmin() { 
       return isSignedIn() && 
-             request.auth.token.email == 'HungryHanna@gmail.com' && 
+             request.auth.token.email.lower() == 'hungryhanna@gmail.com' && 
              request.auth.token.email_verified == true; 
     }
-    function isValidId(id) { return id is string && id.size() <= 64 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function isValidId(id) { return id is string && id.size() > 0 && id.size() <= 128; }
     function incoming() { return request.resource.data; }
 
     function isValidRSVP(data) {

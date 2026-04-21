@@ -38,7 +38,7 @@ import {
   User
 } from 'firebase/auth';
 
-// Doha's Birthday Mission - Version 1.0.2
+// Doha's Birthday Mission - Version 1.0.3
 export default function App() {
   const [formState, setFormState] = useState({
     name: '',
@@ -49,6 +49,7 @@ export default function App() {
 
   const [user, setUser] = useState<User | null>(null);
   const [rsvps, setRsvps] = useState<any[]>([]);
+  const [loadingRSVPs, setLoadingRSVPs] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
   const [authInitialized, setAuthInitialized] = useState(false);
@@ -65,11 +66,14 @@ export default function App() {
 
   useEffect(() => {
     if (isAdmin && showAdmin) {
+      setLoadingRSVPs(true);
       const q = query(collection(db, 'rsvps'), orderBy('createdAt', 'desc'));
       const unsubscribe = onSnapshot(q, (snapshot) => {
         setRsvps(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        setLoadingRSVPs(false);
       }, (err) => {
         console.error("Dashboard error:", err);
+        setLoadingRSVPs(false);
       });
       return () => unsubscribe();
     }
@@ -144,6 +148,7 @@ export default function App() {
           </button>
           <div className="text-right">
             <h1 className="font-black text-sm uppercase italic">Patrol Command</h1>
+            {loadingRSVPs && <p className="text-[10px] font-bold text-yellow-300 animate-pulse">SYNCING...</p>}
             <button 
               onClick={() => signOut(auth)}
               className="text-[10px] font-bold text-blue-200 underline"
